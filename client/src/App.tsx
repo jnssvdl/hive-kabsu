@@ -1,20 +1,28 @@
 import { useEffect } from "react";
-import { GoogleLogin } from "./components/google-login";
+import { io } from "socket.io-client";
 
 function App() {
   useEffect(() => {
-    fetch("/api/ping")
-      .then((res) => res.text())
-      .then((text) => console.log("Backend says:", text))
-      .catch((err) => console.error("Error talking to backend:", err));
+    const token = localStorage.getItem("yappr_token"); // your app's custom JWT
+
+    const socket = io("http://localhost:3000", {
+      auth: { token },
+    });
+
+    socket.on("connect", () => {
+      console.log("✅ Socket connected:", socket.id);
+    });
+
+    socket.on("connect_error", (err) => {
+      console.error("❌ Socket connection error:", err.message);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
-  return (
-    <main>
-      <h1>Hello, World</h1>
-      <GoogleLogin />
-    </main>
-  );
+  return <div>Check your console for socket status</div>;
 }
 
 export default App;

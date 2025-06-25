@@ -10,9 +10,9 @@ router.post("/firebase", async (req, res) => {
   try {
     const decoded = await firebaseAdminAuth.verifyIdToken(token);
 
-    if (!decoded.email?.endsWith("@cvsu.edu.ph")) {
-      return res.status(403).json({ message: "Email not allowed" });
-    }
+    // if (!decoded.email?.endsWith("@cvsu.edu.ph")) {
+    //   return res.status(403).json({ message: "Email not allowed" });
+    // }
 
     const appJwt = jwt.sign(
       { uid: decoded.uid, email: decoded.email },

@@ -7,10 +7,10 @@ export function GoogleLogin() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      if (!user.email?.endsWith("@cvsu.edu.ph")) {
-        alert("Only @cvsu.edu.ph emails are allowed");
-        return;
-      }
+      // if (!user.email?.endsWith("@cvsu.edu.ph")) {
+      //   alert("Only @cvsu.edu.ph emails are allowed");
+      //   return;
+      // }
 
       const idToken = await user.getIdToken();
 
