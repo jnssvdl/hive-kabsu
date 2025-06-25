@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { GoogleLogin } from "./components/google-login";
 
 function App() {
   useEffect(() => {
@@ -11,6 +12,7 @@ function App() {
   return (
     <main>
       <h1>Hello, World</h1>
+      <GoogleLogin />
     </main>
   );
 }
