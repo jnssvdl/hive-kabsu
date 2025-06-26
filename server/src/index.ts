@@ -77,6 +77,17 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("chat_message", (payload: { roomId: string; message: string }) => {
+    const { roomId, message } = payload;
+
+    if (!roomId || !message) return;
+
+    socket.to(roomId).emit("chat_message", {
+      from: "Anonymous",
+      message,
+    });
+  });
+
   socket.on("disconnect", () => {
     const index = queue.indexOf(socket);
 
