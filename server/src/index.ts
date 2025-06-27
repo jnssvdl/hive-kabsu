@@ -47,9 +47,8 @@ io.use((socket, next) => {
 const queue: Socket[] = [];
 
 io.on("connection", (socket) => {
-  // console.log(`User: ${socket.id} connected`);
-
-  socket.on("find_match", () => {
+  socket.on("find", () => {
+    socket.rooms.clear();
     if (queue.includes(socket)) {
       return;
     }
@@ -58,42 +57,47 @@ io.on("connection", (socket) => {
       // No partner yet, enqueue self
       queue.push(socket);
       socket.emit("waiting");
-      // console.log(`${socket.id} is waiting`);
     } else {
       const partner = queue.shift()!;
 
-      const roomId = uuidv4();
+      const room = uuidv4();
 
-      socket.join(roomId);
-      partner.join(roomId);
+      socket.join(room);
+      partner.join(room);
 
-      socket.data.roomId = roomId;
-      partner.data.roomId = roomId;
+      socket.data.room = room;
+      partner.data.room = room;
 
-      socket.emit("matched", { roomId });
-      partner.emit("matched", { roomId });
+      socket.emit("matched");
+      partner.emit("matched");
     }
   });
 
-  socket.on("chat_message", ({ roomId, message }) => {
-    if (!roomId || !message) return;
+  socket.on("message", ({ message }) => {
+    if (!message) return;
 
-    socket.to(roomId).emit("chat_message", {
-      from: "Anonymous",
+    const room = socket.data.room;
+
+    socket.to(room).emit("message", {
+      from: socket.id,
       message,
     });
   });
 
-  socket.on("leave", ({ roomId }) => {
+  socket.on("leave", () => {
     const index = queue.indexOf(socket);
 
     if (index !== -1) {
       queue.splice(index, 1);
     }
 
-    socket.to(roomId).emit("partner_disconnected");
-    delete socket.data.roomId;
-    socket.leave(roomId);
+    const room = socket.data.room;
+
+    if (room) {
+      socket.to(room).emit("disconnected");
+      delete socket.data.room;
+      socket.leave(room);
+    }
   });
 
   socket.on("disconnect", () => {
@@ -103,11 +107,11 @@ io.on("connection", (socket) => {
       queue.splice(index, 1);
     }
 
-    const roomId = socket.data.roomId;
-    if (roomId) {
-      socket.to(roomId).emit("partner_disconnected");
-      delete socket.data.roomId;
-      socket.leave(roomId);
+    const room = socket.data.room;
+    if (room) {
+      socket.to(room).emit("disconnected");
+      delete socket.data.room;
+      socket.leave(room);
     }
   });
 });
