@@ -1,28 +1,15 @@
-import { useEffect } from "react";
-import { io } from "socket.io-client";
+import useAuth from "./hooks/use-auth";
+import Chat from "./pages/chat";
+import Login from "./pages/login";
 
 function App() {
-  useEffect(() => {
-    const token = localStorage.getItem("yappr_token"); // your app's custom JWT
+  const { isAuthenticated } = useAuth();
 
-    const socket = io("http://localhost:3000", {
-      auth: { token },
-    });
+  if (isAuthenticated) {
+    return <Chat />;
+  }
 
-    socket.on("connect", () => {
-      console.log("✅ Socket connected:", socket.id);
-    });
-
-    socket.on("connect_error", (err) => {
-      console.error("❌ Socket connection error:", err.message);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
-  return <div>Check your console for socket status</div>;
+  return <Login />;
 }
 
 export default App;
