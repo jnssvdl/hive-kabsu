@@ -33,36 +33,37 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       setIsWaiting(false);
       setIsMatched(true);
     };
+    const onDisconnected = () => {
+      setIsMatched(false);
+      setIsDisconnected(true);
+    };
     const onMessage = (message: Message) =>
       setMessages((prev) => [...prev, message]);
-    const onDisconnected = () => {
-      setIsDisconnected(true);
-      setIsMatched(false);
-    };
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
 
     socket.on("waiting", onWaiting);
     socket.on("matched", onMatched);
-    socket.on("message", onMessage);
     socket.on("disconnected", onDisconnected);
+    socket.on("message", onMessage);
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
+
       socket.off("waiting", onWaiting);
       socket.off("matched", onMatched);
-      socket.off("message", onMessage);
       socket.off("disconnected", onDisconnected);
+      socket.off("message", onMessage);
       socket.disconnect();
     };
   }, []);
 
   const findMatch = () => {
     setMessages([]);
-    // setIsDisconnected(false);
-    // setIsMatched(false);
+    setIsMatched(false);
+    setIsDisconnected(false);
     socket.emit("find");
   };
 
@@ -77,10 +78,9 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
   const leaveRoom = () => {
     socket.emit("leave");
-    setIsMatched(false);
     setIsWaiting(false);
-    setIsDisconnected(false);
     setIsMatched(false);
+    setIsDisconnected(false);
   };
 
   return (
