@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useChat } from "./chat-context";
+import { socket } from "@/lib/socket";
 
 export default function ChatForm() {
   const { sendMessage, isMatched } = useChat();
@@ -9,6 +10,18 @@ export default function ChatForm() {
     e.preventDefault();
     sendMessage(message);
     setMessage("");
+    socket.emit("typing", { typing: false });
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setMessage(value);
+
+    if (value.trim()) {
+      socket.emit("typing", { typing: true });
+    } else {
+      socket.emit("typing", { typing: false });
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -17,6 +30,7 @@ export default function ChatForm() {
       e.preventDefault();
       sendMessage(message);
       setMessage("");
+      socket.emit("typing", { typing: false });
     }
   };
 
@@ -24,7 +38,7 @@ export default function ChatForm() {
     <form onSubmit={handleSubmit}>
       <input
         value={message}
-        onChange={(e) => setMessage(e.target.value)}
+        onChange={handleChange}
         onKeyDown={handleKeyDown}
         placeholder="Type your message..."
       />

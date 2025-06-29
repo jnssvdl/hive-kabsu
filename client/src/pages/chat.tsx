@@ -8,6 +8,7 @@ export default function Chat() {
     isWaiting,
     isMatched,
     isDisconnected,
+    isTyping,
     messages,
     findMatch,
     leaveRoom,
@@ -35,6 +36,8 @@ export default function Chat() {
         {isDisconnected && !isMatched && <p>They have disconnected</p>}
 
         <ChatBox messages={messages} />
+
+        {isTyping && <p>Typing...</p>}
 
         {!isWaiting && isMatched && <p>Match found! Chat now</p>}
       </main>

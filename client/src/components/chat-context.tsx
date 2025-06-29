@@ -7,6 +7,7 @@ type ChatContextType = {
   isWaiting: boolean;
   isMatched: boolean;
   isDisconnected: boolean;
+  isTyping: boolean;
   messages: Message[];
   sendMessage: (message: string) => void;
   leaveRoom: () => void;
@@ -20,6 +21,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [isWaiting, setIsWaiting] = useState(false);
   const [isMatched, setIsMatched] = useState(false);
   const [isDisconnected, setIsDisconnected] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
@@ -37,6 +39,9 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
       setIsMatched(false);
       setIsDisconnected(true);
     };
+
+    const onTyping = ({ typing }: { typing: boolean }) => setIsTyping(typing);
+
     const onMessage = (message: Message) =>
       setMessages((prev) => [...prev, message]);
 
@@ -46,6 +51,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     socket.on("waiting", onWaiting);
     socket.on("matched", onMatched);
     socket.on("disconnected", onDisconnected);
+
+    socket.on("typing", onTyping);
     socket.on("message", onMessage);
 
     return () => {
@@ -90,6 +97,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         isWaiting,
         isMatched,
         isDisconnected,
+        isTyping,
         messages,
         findMatch,
         sendMessage,
