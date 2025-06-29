@@ -45,8 +45,13 @@ io.use((socket, next) => {
 });
 
 const queue: Socket[] = [];
+let online = 0;
 
 io.on("connection", (socket) => {
+  online++;
+
+  io.emit("online", online);
+
   socket.on("find", () => {
     // socket.rooms.clear();
 
@@ -115,6 +120,9 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
+    online = Math.max(0, online - 1);
+    io.emit("online", online);
+
     const index = queue.indexOf(socket);
 
     if (index !== -1) {
