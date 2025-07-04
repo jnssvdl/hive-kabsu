@@ -41,6 +41,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     const onDisconnected = () => {
       setIsMatched(false);
       setIsDisconnected(true);
+      setIsTyping(false);
     };
 
     const onTyping = ({ typing }: { typing: boolean }) => setIsTyping(typing);
