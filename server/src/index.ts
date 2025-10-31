@@ -88,11 +88,11 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("typing", ({ typing }) => {
+  socket.on("typing", (typing: boolean) => {
     const room = socket.data.room;
     if (!room) return;
 
-    socket.to(room).emit("typing", { typing });
+    socket.to(room).emit("typing", typing);
   });
 
   socket.on("message", ({ message }) => {
