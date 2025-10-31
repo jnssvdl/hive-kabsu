@@ -6,7 +6,7 @@ import { Separator } from "./ui/separator";
 import LogoutButton from "./logout-button";
 
 export default function Header() {
-  const { isMatched, leaveRoom } = useChat();
+  const { status, leaveRoom } = useChat();
 
   return (
     <header className="bg-background sticky top-0 z-10 flex items-center justify-between border-b p-4">
@@ -22,7 +22,7 @@ export default function Header() {
         <Separator orientation="vertical" />
         <Button
           onClick={leaveRoom}
-          disabled={!isMatched}
+          disabled={status !== "matched"}
           variant="ghost"
           size="icon"
           className="hover:bg-destructive/20 dark:hover:bg-destructive/20 text-destructive hover:text-destructive"

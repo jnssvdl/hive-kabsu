@@ -6,14 +6,14 @@ import { SendHorizonal } from "lucide-react";
 import { Input } from "./ui/input";
 
 export default function ChatForm() {
-  const { sendMessage, isMatched } = useChat();
+  const { sendMessage, status } = useChat();
   const [message, setMessage] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     sendMessage(message);
     setMessage("");
-    socket.emit("typing", { typing: false });
+    socket.emit("typing", false);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,19 +21,19 @@ export default function ChatForm() {
     setMessage(value);
 
     if (value.trim()) {
-      socket.emit("typing", { typing: true });
+      socket.emit("typing", true);
     } else {
-      socket.emit("typing", { typing: false });
+      socket.emit("typing", false);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!isMatched) return;
+    if (status !== "matched") return;
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage(message);
       setMessage("");
-      socket.emit("typing", { typing: false });
+      socket.emit("typing", false);
     }
   };
 
@@ -46,7 +46,7 @@ export default function ChatForm() {
         placeholder="Type your message..."
         className="rounded-full"
       />
-      <Button type="submit" disabled={!isMatched} size="icon">
+      <Button type="submit" disabled={status !== "matched"} size="icon">
         <SendHorizonal />
       </Button>
     </form>

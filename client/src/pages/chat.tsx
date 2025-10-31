@@ -2,26 +2,20 @@ import ChatForm from "@/components/chat-form";
 import { useChat } from "@/components/chat-context";
 import ChatBox from "@/components/chat-box";
 import { Button } from "@/components/ui/button";
-import { Loader2, MessageCircle, Unlink, Users } from "lucide-react";
+import { Loader2, MessageCircle, Users } from "lucide-react";
 import { useEffect, useRef } from "react";
 import TypingIndicator from "@/components/typing-indicator";
 import Header from "@/components/header";
+import StatusText from "@/components/status-text";
 
 export default function Chat() {
-  const {
-    isWaiting,
-    isMatched,
-    isDisconnected,
-    isTyping,
-    messages,
-    findMatch,
-  } = useChat();
+  const { status, isTyping, messages, findMatch } = useChat();
 
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     ref.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isWaiting, isMatched, isDisconnected]);
+  }, [messages, status]);
 
   return (
     <div className="flex h-screen justify-center lg:p-4">
@@ -30,32 +24,34 @@ export default function Chat() {
 
         <div className="flex-1 overflow-y-auto">
           <div className="flex min-h-full flex-col justify-end gap-2 p-4">
-            {!isWaiting && isMatched && (
-              <p className="text-muted-foreground flex items-center justify-center gap-2">
-                <Users className="h-4 w-4" />
-                <span>You're connected! Say hi to them!</span>
-              </p>
+            {status === "matched" && (
+              <StatusText
+                Icon={Users}
+                text="You're connected! Say hi to them!"
+              />
             )}
 
-            {isWaiting && (
-              <p className="text-muted-foreground flex items-center justify-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Finding someone you can chat with...</span>
-              </p>
+            {status === "waiting" && (
+              <StatusText
+                Icon={Loader2}
+                text="Waiting someone you can chat with..."
+                iconClassName="animate-spin"
+              />
             )}
 
             <ChatBox messages={messages} />
 
             {isTyping && <TypingIndicator />}
 
-            {isDisconnected && !isMatched && (
-              <p className="text-destructive flex items-center justify-center gap-2">
-                <Unlink className="h-4 w-4" />
-                <span>They have disconnected!</span>
-              </p>
+            {status === "disconnected" && (
+              <StatusText
+                Icon={Loader2}
+                text="Waiting someone you can chat with..."
+                className="text-destructive"
+              />
             )}
 
-            {!isMatched && !isWaiting && (
+            {status === "idle" && (
               <div className="flex justify-center">
                 <Button onClick={findMatch} className="rounded-full">
                   <MessageCircle />
