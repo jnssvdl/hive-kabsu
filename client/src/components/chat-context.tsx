@@ -1,13 +1,22 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useReducer } from "react";
 import { useSocket } from "./socket-context";
 import type { Message } from "../types/message";
 
-type ChatContextType = {
-  isWaiting: boolean;
-  isMatched: boolean;
-  isDisconnected: boolean;
+type Status = "idle" | "waiting" | "matched" | "disconnected";
+
+type ChatState = {
+  status: Status;
   isTyping: boolean;
   messages: Message[];
+};
+
+type ChatAction =
+  | { type: "set_status"; payload: Status }
+  | { type: "typing"; payload: boolean }
+  | { type: "add_message"; payload: Message }
+  | { type: "reset" };
+
+type ChatContextType = ChatState & {
   sendMessage: (message: string) => void;
   leaveRoom: () => void;
   findMatch: () => void;
@@ -15,30 +24,41 @@ type ChatContextType = {
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
+const reducer = (state: ChatState, action: ChatAction): ChatState => {
+  switch (action.type) {
+    case "set_status":
+      return { ...state, status: action.payload };
+    case "typing":
+      return { ...state, isTyping: action.payload };
+    case "add_message":
+      return { ...state, messages: [...state.messages, action.payload] };
+    case "reset":
+      return { ...state, messages: [] };
+  }
+};
+
+const initialState: ChatState = {
+  status: "idle",
+  isTyping: false,
+  messages: [],
+};
+
 export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const { socket } = useSocket();
 
-  const [isWaiting, setIsWaiting] = useState(false);
-  const [isMatched, setIsMatched] = useState(false);
-  const [isDisconnected, setIsDisconnected] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    const onWaiting = () => setIsWaiting(true);
-    const onMatched = () => {
-      setIsWaiting(false);
-      setIsMatched(true);
-      setIsDisconnected(false);
-    };
-    const onDisconnected = () => {
-      setIsMatched(false);
-      setIsDisconnected(true);
-      setIsTyping(false);
-    };
-    const onTyping = ({ typing }: { typing: boolean }) => setIsTyping(typing);
+    const onWaiting = () =>
+      dispatch({ type: "set_status", payload: "waiting" });
+    const onMatched = () =>
+      dispatch({ type: "set_status", payload: "matched" });
+    const onDisconnected = () =>
+      dispatch({ type: "set_status", payload: "disconnected" });
+    const onTyping = (typing: boolean) =>
+      dispatch({ type: "typing", payload: typing });
     const onMessage = (message: Message) =>
-      setMessages((prev) => [...prev, message]);
+      dispatch({ type: "add_message", payload: message });
 
     socket.on("waiting", onWaiting);
     socket.on("matched", onMatched);
@@ -56,35 +76,27 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   }, [socket]);
 
   const findMatch = () => {
-    setMessages([]);
-    setIsMatched(false);
-    setIsDisconnected(false);
-    setIsWaiting(true);
+    dispatch({ type: "set_status", payload: "waiting" });
+    dispatch({ type: "reset" });
     socket.emit("find");
   };
 
   const sendMessage = (message: string) => {
     if (!message.trim()) return;
     socket.emit("message", { message });
-    setMessages((prev) => [...prev, { from: socket.id, message }]);
+    dispatch({ type: "add_message", payload: { from: socket.id, message } });
   };
 
   const leaveRoom = () => {
     socket.emit("leave");
-    setIsWaiting(false);
-    setIsMatched(false);
-    setIsDisconnected(false);
-    setMessages([]);
+    dispatch({ type: "set_status", payload: "idle" });
+    dispatch({ type: "reset" });
   };
 
   return (
     <ChatContext.Provider
       value={{
-        isWaiting,
-        isMatched,
-        isDisconnected,
-        isTyping,
-        messages,
+        ...state,
         findMatch,
         sendMessage,
         leaveRoom,
