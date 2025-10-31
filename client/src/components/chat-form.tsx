@@ -38,7 +38,7 @@ export default function ChatForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2">
+    <form onSubmit={handleSubmit} className="flex gap-4">
       <Input
         value={message}
         onChange={handleChange}

@@ -90,7 +90,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const leaveRoom = () => {
     socket.emit("leave");
     dispatch({ type: "set_status", payload: "idle" });
-    dispatch({ type: "reset" });
+    // dispatch({ type: "reset" });
   };
 
   return (

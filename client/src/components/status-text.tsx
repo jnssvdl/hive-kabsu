@@ -14,11 +14,9 @@ export default function StatusText({
   iconClassName,
 }: StatusTextProps) {
   return (
-    <p
-      className={`text-muted-foreground flex items-center justify-center gap-2 ${className}`}
-    >
+    <p className={`flex items-center justify-center gap-2 ${className}`}>
       <Icon className={`h-4 w-4 ${iconClassName}`} />
-      <span>{text}</span>
+      {text}
     </p>
   );
 }

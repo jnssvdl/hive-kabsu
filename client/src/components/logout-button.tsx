@@ -21,7 +21,12 @@ export default function LogoutButton() {
     }
   };
   return (
-    <Button onClick={logout}>
+    <Button
+      onClick={logout}
+      size={"icon"}
+      variant={"ghost"}
+      className="text-destructive hover:bg-destructive/20 dark:hover:bg-destructive/20 hover:text-destructive"
+    >
       <LogOut />
     </Button>
   );
