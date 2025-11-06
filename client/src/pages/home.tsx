@@ -8,6 +8,7 @@ import { DotPattern } from "@/components/ui/dot-pattern";
 import { cn } from "@/lib/utils";
 import { FaShieldAlt, FaUserSecret } from "react-icons/fa";
 import { IoLogoFirebase } from "react-icons/io5";
+import Feature from "@/components/feature";
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
@@ -70,41 +71,9 @@ export default function Home() {
             What is chat.kabsu?
           </h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <div className="group bg-card rounded-lg border p-6 transition-transform duration-300 ease-in-out hover:-translate-y-1.5 hover:shadow-sm">
-              <h3 className="mb-4 text-center text-xl font-semibold text-balance transition-transform duration-300 ease-in-out group-hover:-translate-y-1">
-                <FaUserSecret className="mx-auto mb-4 text-3xl text-balance transition-transform duration-300 ease-in-out group-hover:-translate-y-1" />
-                Anonymous Conversations
-              </h3>
-              <p className="text-muted-foreground text-center transition-transform duration-300 ease-in-out group-hover:-translate-y-1">
-                Connect with fellow CvSU peeps without revealing your identity.
-                This real-time communication is powered by Socket.IO, ensuring a
-                low latency experience.
-              </p>
-            </div>
-
-            <div className="group bg-card rounded-lg border p-6 transition-transform duration-300 ease-in-out hover:-translate-y-1.5 hover:shadow-sm">
-              <h3 className="mb-4 text-center text-xl font-semibold text-balance transition-transform duration-300 ease-in-out group-hover:-translate-y-1">
-                <IoLogoFirebase className="mx-auto mb-4 text-3xl text-balance transition-transform duration-300 ease-in-out group-hover:-translate-y-1" />
-                Secure Authentication
-              </h3>
-              <p className="text-muted-foreground text-center transition-transform duration-300 ease-in-out group-hover:-translate-y-1">
-                We use Firebase Authentication to ensure that only verified
-                users can join. Your account is safe, with no sensitive data
-                stored on our end.
-              </p>
-            </div>
-
-            <div className="group bg-card rounded-lg border p-6 transition-transform duration-300 ease-in-out hover:-translate-y-1.5 hover:shadow-sm">
-              <h3 className="mb-4 text-center text-xl font-semibold text-balance transition-transform duration-300 ease-in-out group-hover:-translate-y-1">
-                <FaShieldAlt className="mx-auto mb-4 text-3xl text-balance transition-transform duration-300 ease-in-out group-hover:-translate-y-1" />
-                Your Data, Your Privacy
-              </h3>
-              <p className="text-muted-foreground text-center transition-transform duration-300 ease-in-out group-hover:-translate-y-1">
-                No messages are stored in our database. Your conversations are
-                secure, ephemeral, and private, ensuring your personal data
-                stays private.
-              </p>
-            </div>
+            {features.map((feature) => (
+              <Feature {...feature} />
+            ))}
           </div>
         </div>
       </div>
@@ -118,3 +87,24 @@ export default function Home() {
     </>
   );
 }
+
+const features = [
+  {
+    Icon: FaUserSecret,
+    title: "Anonymous Conversations",
+    description:
+      "Connect with fellow CvSU peeps without revealing your identity. This real-time communication is powered by Socket.IO, ensuring a low latency experience.",
+  },
+  {
+    Icon: IoLogoFirebase,
+    title: "Secure Authentication",
+    description:
+      "We use Firebase Authentication to ensure that only verified users can join. Your account is safe, with no sensitive data stored on our end.",
+  },
+  {
+    Icon: FaShieldAlt,
+    title: "Your Data, Your Privacy",
+    description:
+      "No messages are stored in our database. Your conversations are secure, ephemeral, and private, ensuring your personal data stays private.",
+  },
+];
