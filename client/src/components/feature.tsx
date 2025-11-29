@@ -8,7 +8,7 @@ type FeatureProps = {
 
 export default function Feature({ Icon, title, description }: FeatureProps) {
   return (
-    <div className="group bg-card rounded-lg border p-6 transition-transform duration-300 ease-in-out hover:-translate-y-1.5 hover:shadow-sm">
+    <div className="group bg-card/40 rounded-lg border p-6 transition-transform duration-300 ease-in-out hover:-translate-y-1.5 hover:shadow-sm">
       <h3 className="mb-4 text-center text-xl font-semibold text-balance transition-transform duration-300 ease-in-out group-hover:-translate-y-1">
         <Icon className="mx-auto mb-4 text-3xl text-balance transition-transform duration-300 ease-in-out group-hover:-translate-y-1" />
         {title}
