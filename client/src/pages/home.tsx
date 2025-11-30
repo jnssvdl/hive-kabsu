@@ -1,11 +1,11 @@
 import { GoogleLogin } from "../components/google-login";
-import { ModeToggle } from "@/components/mode-toggle";
 import { DotPattern } from "@/components/ui/dot-pattern";
 import { cn } from "@/lib/utils";
 import { FaShieldAlt, FaUserSecret } from "react-icons/fa";
 import { IoLogoFirebase } from "react-icons/io5";
 import Feature from "@/components/feature";
 import ContactForm from "@/components/contact-form";
+import { ModeButton } from "@/components/mode-button";
 
 export default function Home() {
   return (
@@ -14,7 +14,8 @@ export default function Home() {
       <header className="fixed z-50 w-full border-b-2 bg-transparent backdrop-blur-md">
         <div className="container mx-auto flex max-w-screen-xl items-center justify-between p-4">
           <h1 className="font-bold">chat.kabsu</h1>
-          <ModeToggle />
+          {/* <ModeToggle /> */}
+          <ModeButton />
         </div>
       </header>
 
