@@ -6,6 +6,7 @@ import { IoLogoFirebase } from "react-icons/io5";
 import Feature from "@/components/feature";
 import ContactForm from "@/components/contact-form";
 import { ModeButton } from "@/components/mode-button";
+import { motion } from "framer-motion";
 
 export default function Home() {
   return (
@@ -13,7 +14,7 @@ export default function Home() {
       {/* header */}
       <header className="fixed z-50 w-full border-b-2 bg-transparent backdrop-blur-md">
         <div className="container mx-auto flex max-w-screen-xl items-center justify-between p-4">
-          <h1 className="text-primary font-bold">Hive</h1>
+          <h1 className="text-primary text-lg font-bold">Hive</h1>
           {/* <ModeToggle /> */}
           <ModeButton />
         </div>
@@ -28,36 +29,72 @@ export default function Home() {
           )}
         />
 
-        <div className="z-10 container mx-auto flex w-full max-w-screen-xl flex-col items-center justify-center gap-y-8 px-4 lg:gap-y-10">
-          <h1 className="text-center text-4xl font-semibold text-balance lg:text-5xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="z-10 container mx-auto flex w-full max-w-screen-xl flex-col items-center justify-center gap-y-8 px-4 lg:gap-y-10"
+        >
+          <motion.h1
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.6 }}
+            className="text-center text-4xl font-semibold text-balance lg:text-5xl"
+          >
             Anonymously talk, interact, and connect with the Kabsu Community
-          </h1>
-          <p className="text-center text-balance lg:text-xl">
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="text-center text-balance lg:text-xl"
+          >
             Instantly connect with a fellow kabsuhenyo — one on one, in real
             time. No profile, just pure conversation.
-          </p>
+          </motion.p>
 
-          <div className="flex flex-col gap-y-4">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35, duration: 0.6 }}
+            className="flex flex-col gap-y-4"
+          >
             <div className="mx-auto">
               <GoogleLogin />
             </div>
             <p className="text-muted-foreground text-center text-sm">
               Log in with your CvSU account to start chatting anonymously.
             </p>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
 
       {/* Some other stuff */}
       {/* features */}
       <div className="from-secondary/60 to-background border-t-2 bg-gradient-to-t py-24">
         <div className="container mx-auto max-w-screen-xl px-4">
-          <h2 className="mb-12 text-center text-3xl font-semibold text-balance">
-            What is Hive?
-          </h2>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            viewport={{ once: true }}
+          >
+            <h2 className="mb-12 text-center text-3xl font-semibold text-balance">
+              What is Hive?
+            </h2>
+          </motion.div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature) => (
-              <Feature {...feature} />
+            {features.map((feature, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: i * 0.2 }}
+                viewport={{ once: true }}
+              >
+                <Feature {...feature} />
+              </motion.div>
             ))}
           </div>
         </div>
@@ -66,15 +103,23 @@ export default function Home() {
       {/* contact */}
       <div className="from-secondary/60 to-background border-t-2 bg-gradient-to-b py-24">
         <div className="container mx-auto max-w-screen-md px-4">
-          <h2 className="mb-6 text-center text-3xl font-semibold text-balance">
-            Contact Us
-          </h2>
-          <p className="text-muted-foreground mb-6 text-center">
-            We'd love to hear from you! Whether you have a question, feedback,
-            feature request or just want to say hello, send us a message!
-          </p>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            viewport={{ once: true }}
+          >
+            <h2 className="mb-6 text-center text-3xl font-semibold text-balance">
+              Contact Us
+            </h2>
 
-          <ContactForm />
+            <p className="text-muted-foreground mb-6 text-center">
+              We'd love to hear from you! Whether you have a question, feedback,
+              feature request or just want to say hello, send us a message!
+            </p>
+
+            <ContactForm />
+          </motion.div>
         </div>
       </div>
 
