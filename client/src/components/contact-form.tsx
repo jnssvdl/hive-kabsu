@@ -14,6 +14,11 @@ export default function ContactForm() {
       message: formData.get("message"),
     };
 
+    if (!data.name || !data.email || !data.message) {
+      alert("All fields are required.");
+      return;
+    }
+
     const res = await fetch("/api/contact", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
