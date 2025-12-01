@@ -37,8 +37,7 @@ app.get("/api/ping", (_, res) => res.send("pong"));
 
 const io = new Server(server, {
   cors: {
-    origin:
-      process.env.NODE_ENV === "production" ? "*" : "http://localhost:5173",
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
     methods: ["GET", "POST"],
     credentials: true,
   },
