@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useReducer } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import { useSocket } from "./socket-context";
 import type { Message } from "../types/message";
 
@@ -28,6 +34,7 @@ type ChatContextType = ChatState & {
   sendMessage: (message: string) => void;
   leaveRoom: () => void;
   findMatch: () => void;
+  onlineCount: number;
 };
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -56,6 +63,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const [onlineCount, setOnlineCount] = useState(0);
+
   useEffect(() => {
     const onMatched = () =>
       dispatch({ type: "set_status", payload: "matched" });
@@ -72,6 +81,8 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
 
     socket.on("typing", onTyping);
     socket.on("receive_message", onMessage);
+
+    socket.on("online_count", (count: number) => setOnlineCount(count));
 
     return () => {
       socket.off("matched", onMatched);
@@ -106,6 +117,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         findMatch,
         sendMessage,
         leaveRoom,
+        onlineCount,
       }}
     >
       {children}
