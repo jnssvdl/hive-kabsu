@@ -14,7 +14,7 @@ export default function ChatBubble({ message }: { message: Message }) {
         className={`max-w-full transform rounded-2xl px-4 py-2 break-words ${
           isMe
             ? "bg-primary text-primary-foreground rounded-br-none"
-            : "bg-muted text-muted-foreground rounded-tl-none"
+            : "bg-card text-card-foreground rounded-tl-none"
         } scale-100 opacity-100 transition-all duration-200 ease-in-out`}
       >
         {message.message}

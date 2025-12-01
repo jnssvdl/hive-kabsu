@@ -22,7 +22,7 @@ export default function Chat() {
   return (
     <div className="from-secondary/60 to-background bg-gradient-to-t">
       <div className="mx-auto flex h-screen max-w-5xl flex-col md:p-4">
-        <div className="bg-card/20 flex flex-1 flex-col overflow-hidden md:rounded-2xl md:border-2">
+        <div className="bg-background flex flex-1 flex-col overflow-hidden md:rounded-2xl md:border-2">
           <Header />
 
           <div className="flex-1 overflow-y-auto p-4" ref={ref}>
