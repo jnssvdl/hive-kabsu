@@ -6,7 +6,7 @@ import DisconnectButton from "./disconnect-button";
 export default function Header() {
   return (
     <header className="bg-background flex flex-shrink-0 items-center justify-between gap-4 border-b-2 p-4">
-      <h1 className="font-bold">chat.kabsu</h1>
+      <h1 className="text-primary font-bold">Hive</h1>
 
       <div className="flex space-x-2">
         <ModeToggle />

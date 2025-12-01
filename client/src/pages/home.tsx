@@ -13,14 +13,14 @@ export default function Home() {
       {/* header */}
       <header className="fixed z-50 w-full border-b-2 bg-transparent backdrop-blur-md">
         <div className="container mx-auto flex max-w-screen-xl items-center justify-between p-4">
-          <h1 className="font-bold">chat.kabsu</h1>
+          <h1 className="text-primary font-bold">Hive</h1>
           {/* <ModeToggle /> */}
           <ModeButton />
         </div>
       </header>
 
       {/* hero or login */}
-      <div className="from-primary-foreground/60 to-background relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-b">
+      <div className="from-secondary/60 to-background relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-b">
         <DotPattern
           // glow={true}
           className={cn(
@@ -50,10 +50,10 @@ export default function Home() {
 
       {/* Some other stuff */}
       {/* features */}
-      <div className="from-primary-foreground/60 to-background border-t-2 bg-gradient-to-t py-24">
+      <div className="from-secondary/60 to-background border-t-2 bg-gradient-to-t py-24">
         <div className="container mx-auto max-w-screen-xl px-4">
           <h2 className="mb-12 text-center text-3xl font-semibold text-balance">
-            What is chat.kabsu?
+            What is Hive?
           </h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {features.map((feature) => (
@@ -64,7 +64,7 @@ export default function Home() {
       </div>
 
       {/* contact */}
-      <div className="from-primary-foreground/60 to-background border-t-2 bg-gradient-to-b py-24">
+      <div className="from-secondary/60 to-background border-t-2 bg-gradient-to-b py-24">
         <div className="container mx-auto max-w-screen-md px-4">
           <h2 className="mb-6 text-center text-3xl font-semibold text-balance">
             Contact Us
@@ -78,11 +78,9 @@ export default function Home() {
         </div>
       </div>
 
-      <footer className="from-primary-foreground/60 to-background border-t-2 bg-gradient-to-t py-8">
+      <footer className="from-secondary/60 to-background border-t-2 bg-gradient-to-t py-8">
         <div className="container mx-auto text-center">
-          <p className="text-sm">
-            &copy; {new Date().getFullYear()} chat.kabsu
-          </p>
+          <p className="text-sm">&copy; {new Date().getFullYear()} Hive</p>
         </div>
       </footer>
     </>

@@ -6,7 +6,7 @@ export default function NotFound() {
   const navigate = useNavigate();
 
   return (
-    <div className="from-primary-foreground/60 to-background flex h-screen items-center justify-center bg-gradient-to-b">
+    <div className="from-secondary/60 to-background flex h-screen items-center justify-center bg-gradient-to-b">
       <div className="px-4 text-center">
         <h1 className="text-6xl font-semibold">404</h1>
         <p className="mt-4 text-lg">Page Not Found</p>

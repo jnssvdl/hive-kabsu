@@ -20,7 +20,7 @@ export default function Chat() {
   }, [messages, status]);
 
   return (
-    <div className="from-primary-foreground/60 to-background bg-gradient-to-t">
+    <div className="from-secondary/60 to-background bg-gradient-to-t">
       <div className="mx-auto flex h-screen max-w-5xl flex-col md:p-4">
         <div className="bg-card/20 flex flex-1 flex-col overflow-hidden md:rounded-2xl md:border-2">
           <Header />
