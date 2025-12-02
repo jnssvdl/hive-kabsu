@@ -11,8 +11,8 @@ import NotFound from "./pages/not-found";
 function App() {
   return (
     <>
-      <AuthProvider>
-        <BrowserRouter>
+      <BrowserRouter>
+        <AuthProvider>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route
@@ -29,8 +29,8 @@ function App() {
             />
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
-      </AuthProvider>
+        </AuthProvider>
+      </BrowserRouter>
       <Toaster />
     </>
   );

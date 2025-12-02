@@ -1,7 +1,5 @@
 import { Button } from "./ui/button";
-import { socket } from "../lib/socket";
 import { LogOut } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,28 +11,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useAuth } from "./auth-context";
 
 export default function LogoutButton() {
-  const navigate = useNavigate();
-
-  const logout = async () => {
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-
-      // Disconnect Socket.IO
-      if (socket.connected) {
-        socket.disconnect();
-      }
-
-      navigate("/");
-      window.location.reload();
-    } catch (err) {
-      console.error("Logout failed:", err);
-    }
-  };
+  const { logout } = useAuth();
 
   return (
     <>
