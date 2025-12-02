@@ -19,10 +19,6 @@ export default function Chat() {
     }
   }, [messages, status]);
 
-  useEffect(() => {
-    window.scrollTo(0, document.documentElement.scrollHeight);
-  }, []);
-
   return (
     <div className="from-secondary/60 to-background bg-gradient-to-t">
       <div className="mx-auto flex h-screen max-w-5xl flex-col md:p-4">
