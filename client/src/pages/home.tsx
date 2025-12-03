@@ -7,8 +7,17 @@ import Feature from "@/components/feature";
 import ContactForm from "@/components/contact-form";
 import { ModeButton } from "@/components/mode-button";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/components/auth-context";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 export default function Home() {
+  const { isAuthenticated, loading } = useAuth();
+  const navigate = useNavigate();
+
+  if (loading) return;
+
   return (
     <>
       {/* header */}
@@ -60,12 +69,30 @@ export default function Home() {
             transition={{ delay: 0.35, duration: 0.6 }}
             className="flex flex-col gap-y-4"
           >
-            <div className="mx-auto">
-              <GoogleLogin />
-            </div>
-            <p className="text-muted-foreground text-center text-sm">
-              Log in with your CvSU account to start chatting anonymously.
-            </p>
+            {isAuthenticated ? (
+              <>
+                <Button
+                  onClick={() => navigate("/chat")}
+                  className="group mx-auto rounded-full"
+                  size={"lg"}
+                >
+                  Hop Into the Chat!
+                  <ArrowRight className="transition-transform duration-200 group-hover:translate-x-1" />
+                </Button>
+                <p className="text-muted-foreground text-center text-sm">
+                  Welcome back! :)
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="mx-auto">
+                  <GoogleLogin />
+                </div>
+                <p className="text-muted-foreground text-center text-sm">
+                  Log in with your CvSU account to start chatting anonymously.
+                </p>
+              </>
+            )}
           </motion.div>
         </motion.div>
       </div>
