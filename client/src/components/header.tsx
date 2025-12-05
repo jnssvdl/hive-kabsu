@@ -1,8 +1,9 @@
-import { ModeToggle } from "./mode-toggle";
+// import { ModeToggle } from "./mode-toggle";
 import LogoutButton from "./logout-button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import DisconnectButton from "./disconnect-button";
 import { useChat } from "./chat-context";
+import { ModeButton } from "./mode-button";
 
 export default function Header() {
   const { onlineCount } = useChat();
@@ -15,7 +16,8 @@ export default function Header() {
           <div className="bg-primary top-0 left-0 h-2 w-2 rounded-full"></div>
           online: {onlineCount}
         </div>
-        <ModeToggle />
+        {/* <ModeToggle /> */}
+        <ModeButton />
         <Tooltip>
           <TooltipTrigger asChild>
             <span>
