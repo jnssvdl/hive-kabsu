@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import { firebaseAdminAuth } from "../lib/firebase-admin";
 
-export const socketAuthenticate = async (
+export const authenticateSocket = async (
   socket: Socket,
   next: (err?: Error) => void
 ) => {

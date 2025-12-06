@@ -8,7 +8,7 @@ import { Server, Socket } from "socket.io";
 
 import { v4 as uuidv4 } from "uuid";
 import path from "path";
-import { socketAuthenticate } from "./middleware/socket-auth";
+import { authenticateSocket } from "./middleware/authenticate-socket";
 
 dotenv.config();
 
@@ -38,32 +38,26 @@ const io = new Server(server, {
 });
 
 // socket io middleware
-io.use(socketAuthenticate);
+io.use(authenticateSocket);
 
-const queue: Socket[] = [];
+let queue: Socket[] = [];
+
+let userQueue: string[] = [];
 
 const onlineUsers = new Set<string>();
 
 io.on("connection", (socket) => {
   const user = socket.user;
-  console.log(user);
 
-  if (user?.uid) {
+  if (user) {
     onlineUsers.add(user.uid);
     io.emit("online_count", onlineUsers.size);
   }
 
   socket.on("find", () => {
-    for (const room of socket.rooms) {
-      if (room !== socket.id) {
-        socket.leave(room);
-      }
-    }
-
     if (queue.length === 0) {
       // No partner yet, enqueue self
       queue.push(socket);
-      // socket.emit("waiting");
     } else {
       const partner = queue.shift()!;
 
@@ -99,11 +93,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("leave", () => {
-    const index = queue.indexOf(socket);
-
-    if (index !== -1) {
-      queue.splice(index, 1);
-    }
+    queue = queue.filter((s) => s !== socket);
 
     const room = socket.data.room;
 
@@ -115,16 +105,12 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    if (user?.uid) {
+    if (user) {
       onlineUsers.delete(user.uid);
       io.emit("online_count", onlineUsers.size);
     }
 
-    const index = queue.indexOf(socket);
-
-    if (index !== -1) {
-      queue.splice(index, 1);
-    }
+    queue = queue.filter((s) => s !== socket);
 
     const room = socket.data.room;
     if (room) {
