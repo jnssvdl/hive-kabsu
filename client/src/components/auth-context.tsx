@@ -1,16 +1,10 @@
 import { auth, provider } from "@/lib/firebase";
-import {
-  onAuthStateChanged,
-  onIdTokenChanged,
-  signInWithPopup,
-  type User,
-} from "firebase/auth";
+import { onAuthStateChanged, signInWithPopup, type User } from "firebase/auth";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 type AuthContextType = {
   user: User | null;
-  token: string | null;
   loading: boolean;
   googleLogin: () => Promise<User | null>;
   logout: () => void;
@@ -20,7 +14,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,18 +22,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(false);
     });
 
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    const unsubscribe = onIdTokenChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        const idToken = await currentUser.getIdToken();
-        setToken(idToken);
-      } else {
-        setToken(null);
-      }
-    });
     return () => unsubscribe();
   }, []);
 
@@ -82,7 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, googleLogin, logout }}>
+    <AuthContext.Provider value={{ user, loading, googleLogin, logout }}>
       {children}
     </AuthContext.Provider>
   );
