@@ -46,9 +46,7 @@ let queue: string[] = []; // userId
 
 // const map = new Map<string, Set<string>>(); // chatRoom => Set of userId
 
-const userRoomMap = new Map<string, string>(); // userId => chatRoom
-
-// i think you can even make it userId => peerId (userId)
+const userChatRoom = new Map<string, string>(); // userId => chatRoom
 
 io.on("connection", (socket) => {
   const userId = socket.user?.uid;
@@ -63,6 +61,9 @@ io.on("connection", (socket) => {
   const userRoom = `user:${userId}`;
   socket.join(userRoom);
 
+  // TODO: implement online count, create a new set or refer to userChatRoom map?
+  socket.on("online_count", () => {});
+
   socket.on("find_match", () => {
     if (queue.length === 0) {
       queue.push(userId); // enqueue user
@@ -76,8 +77,10 @@ io.on("connection", (socket) => {
 
       const chatRoom = `chat:${chatId}`; // make chatRoom
 
-      // userRoomMap.set(userId, chatRoom);
-      // userRoomMap.set(peerId, chatRoom);
+      userChatRoom.set(userId, chatRoom);
+      userChatRoom.set(peerId, chatRoom);
+
+      console.log("userChatRoom on matched: ", userChatRoom);
 
       // const users = new Set<string>();
       // users.add(userId);
@@ -97,6 +100,9 @@ io.on("connection", (socket) => {
     ({ chatRoom, typing }: { chatRoom: string; typing: boolean }) => {
       if (!socket.rooms.has(chatRoom)) return;
 
+      // real validation
+      if (userChatRoom.get(userId) !== chatRoom) return;
+
       socket.to(chatRoom).emit("typing", typing);
     }
   );
@@ -106,7 +112,8 @@ io.on("connection", (socket) => {
     ({ chatRoom, text }: { chatRoom: string; text: string }) => {
       if (!socket.rooms.has(chatRoom) || !text) return;
 
-      console.log("userId: ", userId);
+      // real validation
+      if (userChatRoom.get(userId) !== chatRoom) return;
 
       socket.to(chatRoom).emit("receive_message", {
         from: userId,
@@ -115,32 +122,54 @@ io.on("connection", (socket) => {
     }
   );
 
-  // TODO: leaving or disconnecting is basically ending the chat, make user that the sockets leave the current room
   socket.on("leave_room", (chatRoom: string) => {
     if (!socket.rooms.has(chatRoom)) return;
 
-    socket.to(chatRoom).emit("disconnected");
-
-    io.in(userRoom).socketsLeave(chatRoom);
-    // io.in(chatRoom).socketsLeave(chatRoom); // i think i should leave on chatRoom instead of userRoom
-  });
-
-  socket.on("disconnecting", () => {
-    // TODO: should not emit disconnected if there are still user sockets
-    const chatRoom = [...socket.rooms].find((room) => room.startsWith("chat:"));
-
-    if (!chatRoom) return;
+    if (userChatRoom.get(userId) !== chatRoom) return;
 
     socket.to(chatRoom).emit("disconnected");
 
-    io.in(userRoom).socketsLeave(chatRoom);
-    // io.in(chatRoom).socketsLeave(chatRoom); // same with this
+    console.log("chatRoom before: ", io.sockets.adapter.rooms.get(chatRoom));
+
+    // io.in(userRoom).socketsLeave(chatRoom);
+
+    // clear the chatRoom
+    io.in(chatRoom).socketsLeave(chatRoom); // i think i should leave on chatRoom instead of userRoom
+
+    console.log("chatRoom now: ", io.sockets.adapter.rooms.get(chatRoom));
   });
 
+  // when a user close all their sockets (tabs)
   socket.on("disconnect", () => {
-    if (Array.from(io.sockets.adapter.rooms.get(userRoom) || []).length === 0) {
+    const sockets = io.sockets.adapter.rooms.get(userRoom);
+    if (Array.from(sockets || []).length === 0) {
+      // remove from queue if waiting
       queue = queue.filter((uid) => uid !== userId);
       // console.log("queue after disconnect: ", queue);
+
+      // remove chatRoom
+      const chatRoom = userChatRoom.get(userId);
+      if (chatRoom) {
+        // inform the client that peer have disconnected (bye)
+        socket.to(chatRoom).emit("disconnected");
+
+        console.log(
+          "sockets adapter chatRoom now: ",
+          io.sockets.adapter.rooms.get(chatRoom)
+        );
+
+        // clear the chatRoom
+        io.in(chatRoom).socketsLeave(chatRoom);
+
+        console.log(
+          "sockets adapter chatRoom now: ",
+          io.sockets.adapter.rooms.get(chatRoom)
+        );
+      }
+
+      // remove from map
+      userChatRoom.delete(userId);
+      console.log("map after disconnect: ", userChatRoom);
     }
   });
 });
