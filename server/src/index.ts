@@ -114,10 +114,7 @@ io.on("connection", (socket) => {
     const { chatRoom } = chatMap.get(userId) || {};
     if (!chatRoom) return;
 
-    socket.to(chatRoom).emit("receive_message", {
-      from: userId,
-      text,
-    });
+    socket.to(chatRoom).emit("receive_message", { text });
   });
 
   socket.on("end_chat", () => {
