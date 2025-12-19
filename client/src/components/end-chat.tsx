@@ -13,8 +13,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-export default function DisconnectButton() {
-  const { status, leaveRoom } = useChat();
+export default function EndChat() {
+  const { status, endChat } = useChat();
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -30,7 +30,7 @@ export default function DisconnectButton() {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Are you sure you want to disconnect?
+            Are you sure you want to end the chat?
           </AlertDialogTitle>
           <AlertDialogDescription>
             You will be disconnected from the chat. If you'd like, you can say
@@ -40,7 +40,9 @@ export default function DisconnectButton() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={leaveRoom}>Continue</AlertDialogAction>
+          <AlertDialogAction onClick={endChat} asChild>
+            <Button variant={"destructive"}>End chat</Button>
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

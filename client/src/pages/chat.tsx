@@ -28,47 +28,38 @@ export default function Chat() {
           <div className="flex-1 overflow-y-auto p-4" ref={ref}>
             <div className="flex min-h-full flex-col justify-end gap-2">
               {status === "waiting" && (
-                <StatusText
-                  Icon={Loader2}
-                  text="Waiting someone you can chat with..."
-                  iconClassName="animate-spin"
-                />
+                <div className="animate-in slide-in-from-bottom-20 space-y-4 duration-200">
+                  <StatusText
+                    Icon={Loader2}
+                    text="Waiting for a kabushenyo you can chat with..."
+                    iconClassName="animate-spin"
+                  />
+                </div>
               )}
 
               {status === "matched" && (
-                <StatusText
-                  Icon={Users}
-                  text="You're connected! Say hi to them!"
-                />
+                <div className="animate-in slide-in-from-bottom-20 space-y-4 duration-200">
+                  <StatusText
+                    Icon={Users}
+                    text="You're connected! Start chatting now."
+                  />
+                </div>
               )}
 
               <ChatBox messages={messages} />
               {isTyping && <TypingIndicator />}
 
-              {status === "disconnected" && (
-                <>
+              {status === "chat_ended" && (
+                <div className="animate-in slide-in-from-bottom-20 space-y-4 duration-200">
                   <StatusText
                     Icon={Unlink}
-                    text="They have disconnected!"
+                    text="Looks like the chat has ended! :("
                     className="text-destructive"
                   />
                   <div className="flex justify-center">
                     <NewChat />
                   </div>
-                </>
-              )}
-
-              {status === "left" && (
-                <>
-                  <StatusText
-                    Icon={Unlink}
-                    text="You left the chat."
-                    className="text-destructive"
-                  />
-                  <div className="flex justify-center">
-                    <NewChat />
-                  </div>
-                </>
+                </div>
               )}
 
               {status === "idle" && (
