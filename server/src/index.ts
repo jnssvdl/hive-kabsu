@@ -104,10 +104,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("typing", ({ typing }: { typing: boolean }) => {
-    const { chatRoom } = chatMap.get(userId) || {};
-    if (!chatRoom) return;
+    const { chatRoom, peerId } = chatMap.get(userId) || {};
+    if (!chatRoom || !peerId) return;
 
-    socket.to(chatRoom).emit("typing", typing);
+    socket.to(`user:${peerId}`).emit("typing", { typing });
   });
 
   socket.on("send_message", ({ text }: { text: string }) => {
