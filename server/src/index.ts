@@ -62,12 +62,26 @@ io.on("connection", (socket) => {
   onlineUsers.add(userId);
   socket.emit("online_count", onlineUsers.size);
 
+  if (queue.includes(userId)) {
+    io.to(userRoom).emit("waiting");
+  }
+
+  if (chatMap.has(userId)) {
+    console.log("new socket: ", socket.id);
+    const { chatRoom } = chatMap.get(userId) || {};
+
+    if (!chatRoom) return;
+    io.to(userRoom).socketsJoin(chatRoom);
+    io.to(userRoom).emit("matched");
+  }
+
   socket.on("find_match", () => {
     if (queue.length === 0) {
       queue.push(userId); // enqueue user
+      io.to(userRoom).emit("waiting");
       // console.log("queue", queue);
     } else {
-      if (queue.includes(userId)) return;
+      if (queue.includes(userId) || chatMap.has(userId)) return;
 
       const peerId = queue.shift()!; // userId of peer
 
@@ -106,12 +120,12 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("leave_room", () => {
+  socket.on("end_chat", () => {
     const { chatRoom, peerId } = chatMap.get(userId) || {};
 
     if (!chatRoom || !peerId) return;
 
-    socket.to(chatRoom).emit("disconnected");
+    io.to(chatRoom).emit("chat_ended");
 
     console.log("chatRoom before: ", io.sockets.adapter.rooms.get(chatRoom));
 
@@ -137,7 +151,7 @@ io.on("connection", (socket) => {
       if (!chatRoom || !peerId) return;
 
       // inform the client that peer have disconnected (bye)
-      socket.to(chatRoom).emit("disconnected");
+      io.to(chatRoom).emit("chat_ended");
 
       console.log(
         "sockets adapter chatRoom now: ",
