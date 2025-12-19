@@ -13,7 +13,7 @@ export default function ChatForm() {
     e.preventDefault();
     sendMessage(message);
     setMessage("");
-    socket.emit("typing", false);
+    socket.emit("typing", { typing: false });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,9 +21,12 @@ export default function ChatForm() {
     setMessage(value);
 
     if (value.trim()) {
-      socket.emit("typing", true);
+      socket.emit("typing", { typing: true });
+      // setTimeout(() => {
+      //   socket.emit("typing", { typing: false });
+      // }, 2000);
     } else {
-      socket.emit("typing", false);
+      socket.emit("typing", { typing: false });
     }
   };
 
@@ -33,7 +36,7 @@ export default function ChatForm() {
       e.preventDefault();
       sendMessage(message);
       setMessage("");
-      socket.emit("typing", false);
+      socket.emit("typing", { typing: false });
     }
   };
 

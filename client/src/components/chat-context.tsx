@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { useSocket } from "./socket-context";
 import type { Message } from "../types/message";
+import { useAuth } from "./auth-context";
 
 /**
  * Chat statuses:
@@ -49,6 +50,8 @@ const reducer = (state: ChatState, action: ChatAction): ChatState => {
       return { ...state, messages: [...state.messages, action.payload] };
     case "clear_chat":
       return { ...state, messages: [] };
+    default:
+      return state;
   }
 };
 
@@ -59,6 +62,7 @@ const initialState: ChatState = {
 };
 
 export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useAuth();
   const { socket } = useSocket();
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -66,15 +70,25 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [onlineCount, setOnlineCount] = useState(0);
 
   useEffect(() => {
-    const onMatched = () =>
+    const onWaiting = () =>
+      dispatch({ type: "set_status", payload: "waiting" }); // when user is already waiting
+
+    const onMatched = () => {
       dispatch({ type: "set_status", payload: "matched" });
+    };
+
     const onDisconnected = () =>
       dispatch({ type: "set_status", payload: "disconnected" });
 
     const onTyping = (typing: boolean) =>
       dispatch({ type: "set_typing", payload: typing });
-    const onMessage = (message: Message) =>
+
+    const onMessage = (message: Message) => {
+      console.log(message);
       dispatch({ type: "add_message", payload: message });
+    };
+
+    socket.on("waiting", onWaiting);
 
     socket.on("matched", onMatched);
     socket.on("disconnected", onDisconnected);
@@ -85,6 +99,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     socket.on("online_count", (count: number) => setOnlineCount(count));
 
     return () => {
+      socket.off("waiting", onWaiting);
       socket.off("matched", onMatched);
       socket.off("disconnected", onDisconnected);
       socket.off("typing", onTyping);
@@ -95,17 +110,17 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const findMatch = () => {
     dispatch({ type: "set_status", payload: "waiting" });
     dispatch({ type: "clear_chat" });
-    socket.emit("find");
+    socket.emit("find_match");
   };
 
-  const sendMessage = (message: string) => {
-    if (!message.trim()) return;
-    socket.emit("send_message", { message });
-    dispatch({ type: "add_message", payload: { from: socket.id, message } });
+  const sendMessage = (text: string) => {
+    if (!text.trim() || !user) return;
+    socket.emit("send_message", { text });
+    dispatch({ type: "add_message", payload: { from: user.uid, text } });
   };
 
   const leaveRoom = () => {
-    socket.emit("leave");
+    socket.emit("leave_room");
     dispatch({ type: "set_status", payload: "left" });
     // dispatch({ type: "clear_chat" });
   };
