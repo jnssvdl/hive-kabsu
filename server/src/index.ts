@@ -46,7 +46,7 @@ let queue: string[] = []; // userId
 
 // const map = new Map<string, Set<string>>(); // chatRoom => Set of userId
 
-const userChatRoom = new Map<string, { chatRoom: string; peerId: string }>(); // userId => { chatRoom, peerId }
+const chatMap = new Map<string, { chatRoom: string; peerId: string }>(); // userId => { chatRoom, peerId }
 
 io.on("connection", (socket) => {
   const userId = socket.user?.uid;
@@ -61,7 +61,7 @@ io.on("connection", (socket) => {
   const userRoom = `user:${userId}`;
   socket.join(userRoom);
 
-  // TODO: implement online count, create a new set or refer to userChatRoom map?
+  // TODO: implement online count, create a new set or refer to chatMap?
   socket.on("online_count", () => {});
 
   socket.on("find_match", () => {
@@ -78,10 +78,10 @@ io.on("connection", (socket) => {
       const chatRoom = `chat:${chatId}`; // make chatRoom
 
       // set their chatRoom and their peerId
-      userChatRoom.set(userId, { chatRoom, peerId });
-      userChatRoom.set(peerId, { chatRoom, peerId: userId });
+      chatMap.set(userId, { chatRoom, peerId });
+      chatMap.set(peerId, { chatRoom, peerId: userId });
 
-      console.log("userChatRoom on matched: ", userChatRoom);
+      console.log("chatMap on matched: ", chatMap);
 
       // const users = new Set<string>();
       // users.add(userId);
@@ -97,7 +97,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("typing", ({ typing }: { typing: boolean }) => {
-    const data = userChatRoom.get(userId);
+    const data = chatMap.get(userId);
     if (!data) return;
 
     const { chatRoom } = data;
@@ -105,7 +105,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send_message", ({ text }: { text: string }) => {
-    const data = userChatRoom.get(userId);
+    const data = chatMap.get(userId);
     if (!data) return;
 
     const { chatRoom } = data;
@@ -116,7 +116,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("leave_room", () => {
-    const data = userChatRoom.get(userId);
+    const data = chatMap.get(userId);
     if (!data) return;
 
     const { chatRoom, peerId } = data;
@@ -132,9 +132,9 @@ io.on("connection", (socket) => {
 
     console.log("chatRoom now: ", io.sockets.adapter.rooms.get(chatRoom));
 
-    userChatRoom.delete(userId);
-    userChatRoom.delete(peerId);
-    console.log("map after disconnect: ", userChatRoom);
+    chatMap.delete(userId);
+    chatMap.delete(peerId);
+    console.log("map after disconnect: ", chatMap);
   });
 
   // when a user close all their sockets (tabs)
@@ -146,7 +146,7 @@ io.on("connection", (socket) => {
       // console.log("queue after disconnect: ", queue);
 
       // remove chatRoom
-      const data = userChatRoom.get(userId);
+      const data = chatMap.get(userId);
       if (!data) return;
 
       const { chatRoom, peerId } = data;
@@ -168,9 +168,9 @@ io.on("connection", (socket) => {
       );
 
       // remove from map
-      userChatRoom.delete(userId);
-      userChatRoom.delete(peerId);
-      console.log("map after disconnect: ", userChatRoom);
+      chatMap.delete(userId);
+      chatMap.delete(peerId);
+      console.log("map after disconnect: ", chatMap);
     }
   });
 });
