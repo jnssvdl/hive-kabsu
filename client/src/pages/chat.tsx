@@ -7,9 +7,10 @@ import TypingIndicator from "@/components/typing-indicator";
 import Header from "@/components/header";
 import StatusText from "@/components/status-text";
 import NewChat from "@/components/new-chat";
+import { Button } from "@/components/ui/button";
 
 export default function Chat() {
-  const { status, isTyping, messages } = useChat();
+  const { status, isTyping, messages, cancelFind } = useChat();
 
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -26,7 +27,7 @@ export default function Chat() {
           <Header />
 
           <div className="flex-1 overflow-y-auto p-4" ref={ref}>
-            <div className="flex min-h-full flex-col justify-end gap-2">
+            <div className="flex min-h-full flex-col justify-end">
               {status === "waiting" && (
                 <div className="animate-in slide-in-from-bottom-20 space-y-4 duration-200">
                   <StatusText
@@ -34,11 +35,20 @@ export default function Chat() {
                     text="Waiting for a kabushenyo you can chat with..."
                     iconClassName="animate-spin"
                   />
+                  <div className="flex justify-center">
+                    <Button
+                      className="rounded-full"
+                      variant={"destructive"}
+                      onClick={cancelFind}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
                 </div>
               )}
 
               {status === "matched" && (
-                <div className="animate-in slide-in-from-bottom-20 space-y-4 duration-200">
+                <div className="animate-in slide-in-from-bottom-20 mb-4 space-y-4 duration-200">
                   <StatusText
                     Icon={Users}
                     text="You're connected! Start chatting now."
@@ -50,21 +60,21 @@ export default function Chat() {
               {isTyping && <TypingIndicator />}
 
               {status === "chat_ended" && (
-                <div className="animate-in slide-in-from-bottom-20 space-y-4 duration-200">
+                <div className="animate-in slide-in-from-bottom-20 mt-4 space-y-4 duration-200">
                   <StatusText
                     Icon={Unlink}
                     text="Looks like the chat has ended! :("
                     className="text-destructive"
                   />
                   <div className="flex justify-center">
-                    <NewChat />
+                    <NewChat variant={"outline"} />
                   </div>
                 </div>
               )}
 
               {status === "idle" && (
                 <div className="flex justify-center">
-                  <NewChat />
+                  <NewChat variant={"default"} />
                 </div>
               )}
             </div>

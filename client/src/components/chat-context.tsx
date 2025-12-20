@@ -33,6 +33,7 @@ type ChatContextType = ChatState & {
   sendMessage: (message: string) => void;
   endChat: () => void;
   findMatch: () => void;
+  cancelFind: () => void;
   onlineCount: number;
 };
 
@@ -112,6 +113,12 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     socket.emit("find_match");
   };
 
+  const cancelFind = () => {
+    if (state.status !== "waiting") return;
+    socket.emit("cancel_find");
+    dispatch({ type: "set_status", payload: "idle" });
+  };
+
   const sendMessage = (text: string) => {
     if (!text.trim()) return;
 
@@ -130,6 +137,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         findMatch,
         sendMessage,
         endChat,
+        cancelFind,
         onlineCount,
       }}
     >
