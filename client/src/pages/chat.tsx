@@ -32,7 +32,7 @@ export default function Chat() {
                 <div className="animate-in slide-in-from-bottom-20 space-y-4 duration-200">
                   <StatusText
                     Icon={Loader2}
-                    text="Waiting for a kabushenyo you can chat with..."
+                    text="Waiting for a kabsuhenyo you can chat with..."
                     iconClassName="animate-spin"
                   />
                   <div className="flex justify-center">
